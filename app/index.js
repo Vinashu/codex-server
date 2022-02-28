@@ -25,13 +25,27 @@ app.get('/images/:image', (req, res) => {
 });
 
 app.get('/api/test', (req, res) => {
-    const test = {_id: 1, desc: 'success'};
+    console.log(req.method + "=>" + req.originalUrl);        
+    const test = {'variable': "Level", 'value': 1};
     res.json(test);
 });
 
-app.post('api/test', (req, res) => {
-    const { data } = req.body;
-    res.redirect('api/test');
+app.delete('/api/test', (req, res) => {
+    console.log(req.method + "=>" + req.originalUrl);        
+    const test = {'variable': "Level", 'value': 5};
+    res.json(test);
+});
+
+app.post('/api/test', (req, res) => {
+    console.log(req.method + "=>" + req.originalUrl);    
+    console.log(req.body);
+    res.redirect('/api/test');
+});
+
+app.put('/api/test', (req, res) => {
+    console.log(req.method + "=>" + req.originalUrl);    
+    console.log(req.body);
+    res.redirect('/api/test');
 });
 
 app.use(function(req, res, next){
