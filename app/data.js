@@ -1,5 +1,10 @@
-const res = require("express/lib/response");
+///
+/// Classes 
+///
 
+/// Class Message
+/// It has a pair { variable, value } that is send to the server
+/// and used to verify for possible targets and rewards
 class Message {
     variable = "";
     value = 0;
@@ -10,6 +15,9 @@ class Message {
     }
 }
 
+/// Class Dispatcher
+/// It is an array of messages, as it is not possible to send an array, 
+/// only JSON objects, so the Dispatcher class has just an array of messages
 class Dispatcher {
     messages = [];
 
@@ -18,6 +26,9 @@ class Dispatcher {
     }
 }
 
+/// Class Target
+/// Has the rules to check what reward can be optained, by checkig
+/// the variable and value that comes in messages
 class Target {
     name = "";
     variable = "";
@@ -34,97 +45,8 @@ class Target {
     }
 }
 
-const targets = [
-    new Target(
-        "Target 1",
-        "level",
-        1,
-        "==",
-        1
-    ),
-    new Target(
-        "Target 2",
-        "levels",
-        10,
-        "==",
-        2
-    ),    
-    new Target(
-        "Target 3",
-        "points",
-        150,
-        "==",
-        3
-    )
-];
-
-const messages = [
-    new Message(
-        "level",
-        1
-    ),
-    new Message(
-        "levels",
-        10
-    ),
-    new Message(
-        "points",
-        150
-    )
-]
-
-const dispatcher = new Dispatcher(messages);
-
-class Engine {
-    targets = [];
-    rewards = [];
-
-    constructor (targets, rewards) {
-        this.targets = targets;
-        this.rewards = rewards;
-    }
-
-    // checkTarget (message) {
-    //     return this.targets.filter((target) => {
-    //         if(target.variable = message.variable) {
-    //             if (eval(message.value + target.operation + target.value)) {
-    //                 return true;
-    //             }
-    //         }
-    //     }) 
-    // }
-    checkTarget (messages) {
-        let result = [];
-        messages.forEach(message => {
-            result = [...result, ...this.targets.filter(target => {
-                return eval(message.value + target.operation + target.value);
-            })];
-        });
-        return result;        
-    }    
-
-    // checkRewards(message) {
-    //     let targets = this.checkTarget(message);
-    //     let result = [];
-    //     targets.forEach(target => {
-    //         result = [...result, ...this.rewards.filter(reward => {
-    //             return target.reward == reward._id;
-    //         })];
-    //     })
-    //     return result;
-    // }
-    checkRewards(messages) {
-        let targets = this.checkTarget(messages);
-        let result = [];
-        targets.forEach(target => {
-            result = [...result, ...this.rewards.filter(reward => {
-                return target.reward == reward._id;
-            })];
-        })
-        return result;
-    }
-}
-
+/// Class Reward
+/// Collection of possible rewards
 class Reward {
     _id = 0;
     category = "";
@@ -141,6 +63,47 @@ class Reward {
     }
 }
 
+/// Class Engine
+/// Class responsible to receive the messages, check the targets
+/// and return an array of rewards
+class Engine {
+    targets = [];
+    rewards = [];
+
+    constructor (targets, rewards) {
+        this.targets = targets;
+        this.rewards = rewards;
+    }
+
+    /// Check all the targets there are valid based on the messages received
+    checkTarget (messages) {
+        let result = [];
+        messages.forEach(message => {
+            result = [...result, ...this.targets.filter(target => {
+                return eval(message.value + target.operation + target.value);
+            })];
+        });
+        return result;        
+    }    
+
+    /// Check all the rewards available based on the messages received
+    checkRewards(messages) {
+        let targets = this.checkTarget(messages);
+        let result = [];
+        targets.forEach(target => {
+            result = [...result, ...this.rewards.filter(reward => {
+                return target.reward == reward._id;
+            })];
+        })
+        return result;
+    }
+}
+
+///
+/// Objects
+///
+
+/// Rewards
 const rewards = [
     new Reward(
         1, 
@@ -165,5 +128,52 @@ const rewards = [
     ),
 ];
 
+/// Targets
+const targets = [
+    new Target(
+        "Target 1",
+        "level",
+        1,
+        "==",
+        1
+    ),
+    new Target(
+        "Target 2",
+        "levels",
+        10,
+        "==",
+        2
+    ),    
+    new Target(
+        "Target 3",
+        "points",
+        150,
+        "==",
+        3
+    )
+];
+
+/// Messages
+const messages = [
+    new Message(
+        "level",
+        1
+    ),
+    new Message(
+        "levels",
+        10
+    ),
+    new Message(
+        "points",
+        150
+    )
+]
+
+/// Dispatcher
+const dispatcher = new Dispatcher(messages);
+
+/// Engine, for testing purpose
 const engine = new Engine(targets, rewards);
-console.log(engine.checkRewards(dispatcher.messages));
+//console.log(engine.checkRewards(dispatcher.messages));
+
+module.exports = {engine, Message};

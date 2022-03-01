@@ -7,8 +7,38 @@ const imagePath = path.join(__dirname, '..','images/');
 const NOT_FOUND = "not_found.png";
 const app = express();
 
+const {engine, Message} = require('./data.js')
+
 app.use(bodyParser.json());
 app.use("images", express.static(imagePath));
+
+app.get('/api/engine', (req, res) => {
+    res.json(engine.checkRewards(
+        [
+            new Message(
+                "level",
+                1
+            ),
+            new Message(
+                "levels",
+                10
+            ),
+            new Message(
+                "points",
+                150
+            )
+        ]
+    ));
+});
+
+app.post('/api/engine', (req, res) => {
+    const messages = req.body.messages;
+    if(messages) {
+        res.json(engine.checkRewards(messages));
+    } else {
+        res.status(500).send('Missing messages body!')
+    }
+});
 
 app.get('/images/:image', (req, res) => {
     const { image } = req.params;
