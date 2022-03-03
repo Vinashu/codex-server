@@ -13,6 +13,7 @@ app.use(bodyParser.json());
 app.use("images", express.static(imagePath));
 
 app.get('/api/engine', (req, res) => {
+    console.log(req.method + "=>" + req.originalUrl);            
     res.json(engine.checkRewards(
         [
             new Message(
@@ -32,6 +33,7 @@ app.get('/api/engine', (req, res) => {
 });
 
 app.post('/api/engine', (req, res) => {
+    // console.log(req.method + "=>" + req.originalUrl);            
     const messages = req.body.messages;
     if(messages) {
         res.json(engine.checkRewards(messages));

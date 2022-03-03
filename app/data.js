@@ -2,6 +2,8 @@
 /// Classes 
 ///
 
+const res = require("express/lib/response");
+
 /// Class Message
 /// It has a pair { variable, value } that is send to the server
 /// and used to verify for possible targets and rewards
@@ -78,11 +80,18 @@ class Engine {
     /// Check all the targets there are valid based on the messages received
     checkTarget (messages) {
         let result = [];
-        messages.forEach(message => {
-            result = [...result, ...this.targets.filter(target => {
-                return eval(message.value + target.operation + target.value);
-            })];
+        // messages.forEach(message => {
+        //     result = [...result, ...this.targets.filter(target => {
+        //         console.log(eval(message.value + target.operation + target.value));
+        //         return eval(message.value + target.operation + target.value);
+        //     })];
+        // });
+        result = this.targets.filter(target => {
+            return messages.some(message => {
+                return target.variable === message.variable && eval(message.value + target.operation + target.value);
+            });
         });
+        //console.log(result);
         return result;        
     }    
 
@@ -90,11 +99,11 @@ class Engine {
     checkRewards(messages) {
         let targets = this.checkTarget(messages);
         let result = [];
-        targets.forEach(target => {
-            result = [...result, ...this.rewards.filter(reward => {
-                return target.reward == reward._id;
-            })];
-        })
+        result = this.rewards.filter(reward => {
+            return targets.some(target => {
+                return eval(reward._id === target.reward);
+            });
+        });
         return result;
     }
 }
@@ -126,6 +135,13 @@ const rewards = [
         "badge03.png", 
         "Achieved the maximum score in one level"
     ),
+    new Reward(
+        4, 
+        "Badge", 
+        "Badge 04",
+        "badge04.png", 
+        "Completed 20 levels"
+    ),    
 ];
 
 /// Targets
@@ -150,7 +166,14 @@ const targets = [
         150,
         "==",
         3
-    )
+    ),
+    new Target(
+        "Target 4",
+        "levels",
+        20,
+        "==",
+        4
+    )    
 ];
 
 /// Messages
