@@ -36,7 +36,7 @@ app.post('/api/engine', (req, res) => {
     // console.log(req.method + "=>" + req.originalUrl);            
     const messages = req.body.messages;
     if(messages) {
-        res.json(engine.checkRewards(messages));
+        res.json({'rewards': engine.checkRewards(messages)});
     } else {
         res.status(500).send('Missing messages body!')
     }

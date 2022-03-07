@@ -126,7 +126,7 @@ const rewards = [
         "Badge",
         "Badge 02", 
         "badge02.png", 
-        "Completed 10 levels"
+        "Completed 5 levels"
     ),
     new Reward(
         3, 
@@ -139,8 +139,8 @@ const rewards = [
         4, 
         "Badge", 
         "Badge 04",
-        "badge04.png", 
-        "Completed 20 levels"
+        "badge04.jpeg", 
+        "Completed 10 levels"
     ),    
 ];
 
@@ -156,7 +156,7 @@ const targets = [
     new Target(
         "Target 2",
         "levels",
-        10,
+        5,
         "==",
         2
     ),    
@@ -170,7 +170,7 @@ const targets = [
     new Target(
         "Target 4",
         "levels",
-        20,
+        10,
         "==",
         4
     )    
