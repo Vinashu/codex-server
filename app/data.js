@@ -2,8 +2,6 @@
 /// Classes 
 ///
 
-const res = require("express/lib/response");
-
 /// Class Message
 /// It has a pair { variable, value } that is send to the server
 /// and used to verify for possible targets and rewards
@@ -65,39 +63,54 @@ class Reward {
     }
 }
 
+class Variable {
+    name = "";
+
+    constructor (name) {
+        this.name = name;
+    }
+}
+
 /// Class Engine
 /// Class responsible to receive the messages, check the targets
 /// and return an array of rewards
 class Engine {
     targets = [];
-    rewards = [];
+    rewards = [];    
+    variables = [];
 
-    constructor (targets, rewards) {
+    constructor (targets, rewards, variables) {
         this.targets = targets;
         this.rewards = rewards;
+        this.variables = variables;
+    }
+
+    /// Check if the variables are valid
+    checkVariables(messages) {
+        let result = [];
+        result = messages.filter(message => {
+            return this.variables.some(variable => {
+                return message.variable === variable.name;
+            });
+        });
+        return result;
     }
 
     /// Check all the targets there are valid based on the messages received
     checkTarget (messages) {
         let result = [];
-        // messages.forEach(message => {
-        //     result = [...result, ...this.targets.filter(target => {
-        //         console.log(eval(message.value + target.operation + target.value));
-        //         return eval(message.value + target.operation + target.value);
-        //     })];
-        // });
         result = this.targets.filter(target => {
             return messages.some(message => {
                 return target.variable === message.variable && eval(message.value + target.operation + target.value);
             });
         });
-        //console.log(result);
         return result;        
     }    
 
     /// Check all the rewards available based on the messages received
     checkRewards(messages) {
-        let targets = this.checkTarget(messages);
+        let checkVariables = this.checkVariables(messages);
+        let targets = this.checkTarget(checkVariables);
         let result = [];
         result = this.rewards.filter(reward => {
             return targets.some(target => {
@@ -111,6 +124,14 @@ class Engine {
 ///
 /// Objects
 ///
+
+/// Variables
+const variables = [
+    new Variable("level"),
+    new Variable("levels"),
+    new Variable("points"),
+    new Variable("allTimePoints"),
+]
 
 /// Rewards
 const rewards = [
@@ -177,6 +198,7 @@ const targets = [
 ];
 
 /// Messages
+/*
 const messages = [
     new Message(
         "level",
@@ -191,12 +213,14 @@ const messages = [
         150
     )
 ]
+*/
 
 /// Dispatcher
-const dispatcher = new Dispatcher(messages);
+// const dispatcher = new Dispatcher(messages);
+// console.log(engine.checkRewards(dispatcher.messages));
 
 /// Engine, for testing purpose
-const engine = new Engine(targets, rewards);
-//console.log(engine.checkRewards(dispatcher.messages));
+const engine = new Engine(targets, rewards, variables);
+
 
 module.exports = {engine, Message};
