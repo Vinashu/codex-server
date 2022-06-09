@@ -27,7 +27,7 @@ class Dispatcher {
 }
 
 /// Class Target
-/// Has the rules to check what reward can be optained, by checkig
+/// Has the rules to check what reward can be obtained, by checking
 /// the variable and value that comes in messages
 class Target {
     name = "";
